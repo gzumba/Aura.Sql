@@ -793,18 +793,12 @@ class ExtendedPdo extends PDO implements ExtendedPdoInterface
      * @see http://php.net/manual/en/pdo.query.php
      *
      */
-    public function query($statement)
+    public function query($statement, ...$fetch)
     {
         $this->connect();
         $this->beginProfile(__FUNCTION__);
 
-        // remove empty constructor params list if it exists
-        $args = func_get_args();
-        if (count($args) === 4 && $args[3] === array()) {
-            unset($args[3]);
-        }
-
-        $sth = call_user_func_array(array($this->pdo, 'query'), $args);
+        $sth = $this->pdo->query($statement, ...$fetch);
 
         $this->endProfile($sth->queryString);
         return $sth;
